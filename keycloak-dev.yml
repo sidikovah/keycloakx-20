@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-secret
+  namespace: keycloak-next-cc
+type: Opaque
+data:
+  KEYCLOAK_ADMIN: base64
+  KEYCLOAK_ADMIN_PASSWORD: base64
+  DB_VENDOR: base64
+  DB_ADDR: base64
+  DB_PORT: base64
+  DB_DATABASE: base64
+  DB_USER: base64
+  DB_PASSWORD: base64
