@@ -1,0 +1,52 @@
+stages:
+  - keycloak-dev
+  - keycloak-test
+  - keycloak-prod
+
+keycloak-dev:
+  stage: keycloak-dev
+  tags:
+    - dev-cc
+  image: 
+    name: alpine/k8s:1.25.6
+    entrypoint: [""]
+  before_script:
+    - mkdir -p ~/.kube/
+    - echo ${KUB_DEV} | base64 -d > ~/.kube/config
+    - chmod o-r ~/.kube/config
+    - chmod g-r ~/.kube/config
+  script:
+    - helm repo add codecentric https://codecentric.github.io/helm-charts
+    - helm upgrade --create-namespace --install keycloak-next helm -n keycloak-next-cc -f helm/values.yaml
+  only:
+    - master
+  when: manual
+
+
+keycloak-test:
+  stage: keycloak-test
+  tags:
+    - test-cc
+  image: 
+    name: alpine/k8s:1.25.6
+    entrypoint: [""]
+  script:
+    - helm repo add codecentric https://codecentric.github.io/helm-charts
+    - helm upgrade --create-namespace --install keycloak helm -n keycloak-test -f helm/test.yml
+  only:
+    - master
+  when: manual  
+
+keycloak-prod:
+  stage: keycloak-prod
+  tags:
+    - prod-cc
+  image: 
+    name: alpine/k8s:1.25.6
+    entrypoint: [""]
+  script:
+    - helm repo add codecentric https://codecentric.github.io/helm-charts
+    - helm upgrade --create-namespace --install keycloak helm -n keycloak-prod -f helm/prod.yml
+  only:
+    - master
+  when: manual
